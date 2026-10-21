@@ -1,0 +1,710 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>CV Keyword Match</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: paste panels, a details form, a three-step score chain (keyword match, role fit, chance), then the working behind each score. */
+:root {
+  --bg: #f2f4f3;
+  --surface: #ffffff;
+  --ink: #15211d;
+  --muted: #5b6b65;
+  --line: #d5dcd9;
+  --accent: #0e6b55;
+  --accent-soft: #dcefe8;
+  --warn: #a4491a;
+  --warn-soft: #f8e6db;
+  --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-data: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101714;
+    --surface: #18211d;
+    --ink: #e6efeb;
+    --muted: #9aaba4;
+    --line: #2b3832;
+    --accent: #4fc2a2;
+    --accent-soft: #1b3a31;
+    --warn: #e59a6b;
+    --warn-soft: #3b2a1e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101714;
+  --surface: #18211d;
+  --ink: #e6efeb;
+  --muted: #9aaba4;
+  --line: #2b3832;
+  --accent: #4fc2a2;
+  --accent-soft: #1b3a31;
+  --warn: #e59a6b;
+  --warn-soft: #3b2a1e;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 6vw, 44px); line-height: 1.05; margin: 0; text-wrap: balance; }
+.lede { margin: 6px 0 0; color: var(--muted); max-width: 62ch; }
+.eyebrow { font-family: var(--font-data); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+.inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.panel label, .field label { font-weight: 600; }
+.count { font-family: var(--font-data); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+textarea {
+  width: 100%; min-height: 230px; resize: vertical;
+  font: inherit; font-size: 14px; line-height: 1.55;
+  color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px;
+}
+input, select {
+  width: 100%; font: inherit; font-size: 14px;
+  color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px;
+}
+textarea:focus-visible, input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.details h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.details p { margin: 0; font-size: 13px; color: var(--muted); }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.hint { font-size: 12px; color: var(--muted); }
+
+.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+button {
+  font: inherit; font-weight: 500; cursor: pointer;
+  color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 7px 14px;
+}
+button:hover { border-color: var(--accent); }
+.example-note { font-size: 13px; color: var(--muted); }
+
+.chain { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 16px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tile .num { font-family: var(--font-display); font-size: clamp(52px, 10vw, 72px); line-height: 0.95; font-variant-numeric: tabular-nums; }
+.tile .num small { font-size: 0.4em; color: var(--muted); margin-left: 2px; }
+.tile .band { font-weight: 600; }
+.tile .sub { font-size: 13px; color: var(--muted); }
+.meter { position: relative; height: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; }
+.meter-fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--accent); border-radius: 3px; }
+.meter-fill.warn { background: var(--warn); }
+@media (prefers-reduced-motion: no-preference) { .meter-fill { transition: width 0.35s ease; } }
+
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.card h2 { margin: 0; font-size: 15px; font-weight: 600; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.card > p { margin: 0; font-size: 13px; color: var(--muted); }
+.rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; row-gap: 2px; padding: 10px 0; border-top: 1px solid var(--line); }
+.row:first-child { border-top: 0; }
+.row .t { font-weight: 500; }
+.row .d { color: var(--muted); font-size: 13px; }
+.row .p { font-family: var(--font-data); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; padding-top: 2px; }
+.row .p.neg { color: var(--warn); }
+.row .p.pos { color: var(--accent); }
+.row .p.zero { color: var(--muted); }
+.row.total { border-top: 2px solid var(--ink); }
+.row.total .t, .row.total .p { font-weight: 600; font-size: 15px; }
+
+.lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--font-data); font-size: 13px; padding: 3px 8px; border-radius: 4px; border: 1px solid; display: inline-flex; gap: 6px; align-items: baseline; overflow-wrap: anywhere; }
+.chip i { font-style: normal; font-size: 11px; opacity: 0.75; }
+.chip.miss { color: var(--warn); background: var(--warn-soft); border-color: var(--warn); }
+.chip.hit { color: var(--accent); background: var(--accent-soft); border-color: var(--accent); }
+.empty { color: var(--muted); font-size: 14px; }
+.note { font-size: 13px; color: var(--muted); max-width: 72ch; margin: 0; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Application tool</div>
+    <h1>CV Keyword Match</h1>
+    <p class="lede">Paste your CV and a job advert. The page scores the keyword match, checks the advert's entry requirements against your details, rates your CV and estimates your chance of an offer.</p>
+  </header>
+
+  <section class="inputs" aria-label="Inputs">
+    <div class="panel">
+      <div class="panel-head"><label for="cv">Your CV</label><span class="count" id="cv-count">0 words</span></div>
+      <textarea id="cv" spellcheck="false" placeholder="Paste your CV text here"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><label for="ad">Job advert</label><span class="count" id="ad-count">0 words</span></div>
+      <textarea id="ad" spellcheck="false" placeholder="Paste the job description here"></textarea>
+    </div>
+  </section>
+
+  <section class="panel details" aria-label="Your details">
+    <h2>Your details</h2>
+    <p>Degree class, subject and A-level grades are read from your CV. Change a field if the page got it wrong.</p>
+    <div class="fields">
+      <div class="field">
+        <label for="f-class">Degree class</label>
+        <select id="f-class">
+          <option value="">Read from CV</option>
+          <option value="1">First</option>
+          <option value="2">2:1</option>
+          <option value="3">2:2</option>
+          <option value="4">Third</option>
+          <option value="pending">Final year, result pending</option>
+          <option value="none">No degree</option>
+        </select>
+        <span class="hint" id="hint-class"></span>
+      </div>
+      <div class="field">
+        <label for="f-subject">Degree subject</label>
+        <input id="f-subject" type="text" placeholder="Read from CV">
+        <span class="hint" id="hint-subject"></span>
+      </div>
+      <div class="field">
+        <label for="f-al">A-level grades</label>
+        <input id="f-al" type="text" placeholder="Read from CV, e.g. A*AB">
+        <span class="hint" id="hint-al"></span>
+      </div>
+      <div class="field">
+        <label for="f-type">Role and employer type</label>
+        <select id="f-type">
+          <option value="bank">Highly competitive: investment bank, top consultancy, law firm</option>
+          <option value="large">Large graduate scheme: Big Four, large corporate</option>
+          <option value="mid">Mid-size firm or specialist</option>
+          <option value="small">Small firm or direct hire</option>
+          <option value="unsure" selected>Not sure</option>
+        </select>
+        <span class="hint" id="hint-type"></span>
+      </div>
+      <div class="field">
+        <label for="f-rate">Acceptance rate, % (optional)</label>
+        <input id="f-rate" type="number" min="0.1" max="100" step="0.1" placeholder="Places divided by applicants">
+        <span class="hint" id="hint-rate"></span>
+      </div>
+    </div>
+  </section>
+
+  <div class="actions">
+    <button type="button" id="load-example">Load example</button>
+    <button type="button" id="clear">Clear both</button>
+    <span class="example-note" id="example-note"></span>
+  </div>
+
+  <section class="chain" aria-live="polite" aria-label="Scores">
+    <div class="tile">
+      <div class="eyebrow">1 &middot; Keyword match</div>
+      <div class="num" id="kw-num">0<small>%</small></div>
+      <div class="meter" aria-hidden="true"><div class="meter-fill" id="kw-meter"></div></div>
+      <div class="sub" id="kw-sub">Paste both documents to start.</div>
+    </div>
+    <div class="tile">
+      <div class="eyebrow">2 &middot; Role fit</div>
+      <div class="num" id="fit-num">0<small>%</small></div>
+      <div class="meter" aria-hidden="true"><div class="meter-fill" id="fit-meter"></div></div>
+      <div class="band" id="fit-band">Waiting for text</div>
+      <div class="sub">Keyword match minus deductions for entry requirements.</div>
+    </div>
+    <div class="tile">
+      <div class="eyebrow">3 &middot; Estimated chance of an offer</div>
+      <div class="num" id="ch-num">0<small>%</small></div>
+      <div class="meter" aria-hidden="true"><div class="meter-fill" id="ch-meter"></div></div>
+      <div class="sub">Rough estimate from role fit, CV strength and the acceptance rate. Not a prediction.</div>
+    </div>
+  </section>
+
+  <section class="detail-grid">
+    <div class="card">
+      <h2>How role fit was worked out</h2>
+      <p>Each entry requirement found in the advert is checked against your details.</p>
+      <ul class="rows" id="fit-rows"></ul>
+    </div>
+    <div class="card">
+      <h2>CV strength <span class="count" id="cv-score"></span></h2>
+      <p>Scored from the text of your CV. These points feed the chance estimate.</p>
+      <ul class="rows" id="cv-rows"></ul>
+    </div>
+    <div class="card">
+      <h2>How the chance was estimated</h2>
+      <p>The starting rate is moved up or down by how you compare with an average applicant.</p>
+      <ul class="rows" id="ch-rows"></ul>
+    </div>
+  </section>
+
+  <section class="lists">
+    <div class="card">
+      <h2>Missing from your CV <span class="count" id="miss-count"></span></h2>
+      <p>Ordered by how much the advert leans on each term. The number is how often it appears in the advert.</p>
+      <div class="chips" id="missing"></div>
+    </div>
+    <div class="card">
+      <h2>Already in your CV <span class="count" id="hit-count"></span></h2>
+      <p>Keep these visible near the top of the page.</p>
+      <div class="chips" id="matched"></div>
+    </div>
+  </section>
+
+  <p class="note">The chance figure comes from a simple model. It does not know the employer's real screening process, how many people apply, or how you perform in tests and interviews. Starting rates by employer type are rough assumptions, so enter the real acceptance rate if the employer publishes one. Use the number to compare roles with each other, not as a forecast. Requirement checks read the advert's wording, so confirm them against the original. Add a missing keyword only where it is true of your experience.</p>
+</div>
+
+<script>
+(function () {
+  var STOP = new Set(("a an the and or of to in for on with at by from as is are was were be been being this that these those it its we you your our their they he she i will would can could should may might must shall do does did have has had not no nor but if then than so such into about over under between through during before after above below up down out off again further once here there when where why how all any both each few more most other some own same too very just also per via within without across among while whom which who what us them his her my me am get gets got").split(/\s+/));
+  var FILLER = ("role team work working looking join opportunity opportunities company candidate candidates successful ideal apply application applications applicant required requirement requirements responsibilities responsibility ability able strong good great excellent including include includes etc new year years day need needs help helps using use used well ensure provide key high highly world people love want expect offer benefits salary location hybrid graduate scheme programme program degree level range wide various variety multiple potential every central helpful advantage knowledge experience carry run").split(/\s+/);
+  var KEEP = new Set(["ai", "ml", "r", "c++", "c#"]);
+
+  function stem(w) {
+    if (w.length <= 3) return w;
+    if (/ies$/.test(w)) w = w.slice(0, -3) + "y";
+    else if (!/(ss|us|is)$/.test(w) && /s$/.test(w)) w = w.slice(0, -1);
+    if (/ing$/.test(w) && w.length > 6) w = w.slice(0, -3);
+    else if (/ed$/.test(w) && w.length > 5) w = w.slice(0, -2);
+    if (/(ll|tt|nn|pp|mm|gg|dd)$/.test(w)) w = w.slice(0, -1);
+    if (/e$/.test(w) && w.length > 4) w = w.slice(0, -1);
+    return w;
+  }
+
+  var FILL = new Set(FILLER.map(stem));
+  var KNOWN = new Set();
+  ("excel python sql vba bloomberg tableau matlab modelling valuation forecasting budgeting analytics analysis research presentation leadership communication stakeholder teamwork numeracy quantitative risk compliance audit derivatives equities accounting accounts reporting regression statistics deadlines negotiation commercial strategy investment portfolio").split(" ").forEach(function (s) { KNOWN.add(stem(s)); });
+  ["financial modelling", "due diligence", "risk management", "stakeholder management", "data analysis", "project management", "problem solving", "attention detail", "team leadership", "client facing", "communication skills", "financial analysis", "financial statements", "cash flow", "time management", "critical thinking", "investment banking", "corporate finance", "private equity", "asset management"].forEach(function (p) {
+    KNOWN.add(p.split(" ").map(stem).join(" "));
+  });
+
+  function toks(text) {
+    var t = text.toLowerCase()
+      .replace(/modeling/g, "modelling")
+      .replace(/[.,;:!?()\[\]{}"“”‘’•·–—\/\\\n\r\t|]/g, " | ")
+      .replace(/[^a-z0-9+#&\s|]/g, " ")
+      .split(/\s+/).filter(Boolean);
+    return t.map(function (w) {
+      if (w === "|" || /^\d+$/.test(w)) return null;
+      return { raw: w, stem: stem(w) };
+    });
+  }
+  function isSkip(t) {
+    return !t || STOP.has(t.raw) || FILL.has(t.stem) || (t.raw.length < 3 && !KEEP.has(t.raw));
+  }
+
+  /* ---------- 1. keyword match ---------- */
+  function analyze(ad, cv) {
+    var A = toks(ad), map = new Map();
+    function add(key, display, n) {
+      var e = map.get(key);
+      if (e) e.count++; else map.set(key, { term: key, display: display, n: n, count: 1 });
+    }
+    for (var i = 0; i < A.length; i++) {
+      if (isSkip(A[i])) continue;
+      add(A[i].stem, A[i].raw, 1);
+      if (i + 1 < A.length && !isSkip(A[i + 1])) {
+        add(A[i].stem + " " + A[i + 1].stem, A[i].raw + " " + A[i + 1].raw, 2);
+      }
+    }
+    var all = Array.from(map.values());
+    all.forEach(function (e) {
+      e.known = KNOWN.has(e.term);
+      e.weight = Math.min(e.count, 5) + (e.known ? 3 : 0) + (e.n === 2 ? 1 : 0);
+    });
+    var picked = all.filter(function (e) { return e.count >= 2 || e.known; });
+    if (picked.length < 15) {
+      var extra = all.filter(function (e) { return e.n === 1 && e.count === 1 && !e.known; })
+        .sort(function (a, b) { return b.display.length - a.display.length; })
+        .slice(0, 15 - picked.length);
+      picked = picked.concat(extra);
+    }
+    var bigrams = picked.filter(function (e) { return e.n === 2; });
+    picked = picked.filter(function (e) {
+      if (e.n === 2) return true;
+      return !bigrams.some(function (b) {
+        return b.count >= e.count && b.term.split(" ").indexOf(e.term) !== -1;
+      });
+    });
+    picked.sort(function (a, b) {
+      return b.weight - a.weight || b.count - a.count || (a.display < b.display ? -1 : 1);
+    });
+    picked = picked.slice(0, 30);
+
+    var C = toks(cv);
+    var cvStr = " " + C.map(function (t) { return t ? t.stem : "|"; }).join(" ") + " ";
+    var total = 0, got = 0;
+    picked.forEach(function (e) {
+      e.found = cvStr.indexOf(" " + e.term + " ") !== -1;
+      total += e.weight;
+      if (e.found) got += e.weight;
+    });
+    return { terms: picked, score: total ? Math.round(got / total * 100) : 0 };
+  }
+
+  /* ---------- 2. entry requirements and role fit ---------- */
+  var CLASS_NAME = { 1: "first", 2: "2:1", 3: "2:2", 4: "third" };
+  var SUBJECTS = ["physics", "mathematics", "maths", "engineering", "computer science", "chemistry", "statistics", "economics", "finance", "accounting", "law", "history", "geography", "biology", "psychology", "politics", "philosophy", "real estate", "surveying", "architecture", "data science", "sociology", "english literature", "business studies", "environmental science", "natural sciences"];
+  var STEM = ["physics", "maths", "mathematics", "engineering", "computer science", "chemistry", "statistics", "economics", "finance", "data science", "natural sciences"];
+  var POINTS = { "A*": 56, "A": 48, "B": 40, "C": 32, "D": 24, "E": 16 };
+  var GR = "((?:A\\*|[A-E]){3})(?![A-Za-z*])";
+  var AL_AFTER = new RegExp("(?:[Aa][- ]?[Ll]evels?|UCAS)[^.\\n]{0,80}?(?:^|[^A-Za-z])" + GR);
+  var AL_BEFORE = new RegExp("(?:^|[^A-Za-z])" + GR + "[^.\\n]{0,15}?[Aa][- ]?[Ll]evel");
+  var DEGREE_MARK = /\b(bsc|b\.sc|ba|b\.a|msc|meng|beng|mphys|mmath|mchem|llb|bachelor'?s?|master'?s?|degree|hons)\b/;
+
+  function gradePoints(str) {
+    var g = str.match(/A\*|[A-E]/g) || [];
+    return g.slice(0, 3).reduce(function (s, x) { return s + POINTS[x]; }, 0);
+  }
+  function normSubj(s) { return s.toLowerCase().replace(/mathematics/g, "maths"); }
+
+  function parseAd(ad) {
+    var low = ad.toLowerCase();
+    var req = { classReq: null, degree: false, anySubject: false, subjects: [], alPts: null, alText: "", notes: [] };
+    var ranks = [];
+    if (/\b1st\b|first[- ]class|\ba first\b/.test(low)) ranks.push(1);
+    if (/\b2[:.]1\b|upper[- ]second/.test(low)) ranks.push(2);
+    if (/\b2[:.]2\b|lower[- ]second/.test(low)) ranks.push(3);
+    if (ranks.length) req.classReq = Math.max.apply(null, ranks);
+    req.degree = req.classReq !== null || /\bdegree\b|\bbsc\b|\bhonours\b/.test(low);
+
+    req.anySubject = /any (degree|subject|discipline)|all disciplines|regardless of (degree|subject)|any academic/.test(low);
+    if (!req.anySubject) {
+      var found = {};
+      ad.split(/[.\n;]/).forEach(function (s) {
+        var l = s.toLowerCase();
+        if (!/\bdegree\b|\bbsc\b|\bhonours\b|\bgraduate in\b|\bsubject/.test(l)) return;
+        SUBJECTS.forEach(function (w) { if (l.indexOf(w) !== -1) found[w] = true; });
+        if (/numerate|\bstem\b|quantitative|analytical/.test(l)) STEM.forEach(function (w) { found[w] = true; });
+      });
+      req.subjects = Object.keys(found);
+    }
+
+    var m = ad.match(AL_AFTER) || ad.match(AL_BEFORE);
+    if (m) { req.alText = m[1]; req.alPts = gradePoints(m[1]); }
+    else {
+      var u = low.match(/(\d{2,3})\s*ucas\s*points/);
+      if (u) { req.alPts = parseInt(u[1], 10); req.alText = u[1] + " UCAS points"; }
+    }
+
+    if (/right to work/.test(low)) req.notes.push(["Right to work", "The advert asks for the right to work in the UK. Check you qualify."]);
+    if (/security (clearance|check)|\bsc clearance|\bdv clearance/.test(low)) req.notes.push(["Security clearance", "The advert mentions security clearance."]);
+    if (/\b(aca|acca|cfa|cima|rics|chartered)\b/.test(low)) req.notes.push(["Professional body", "The advert mentions a professional qualification or accreditation. Check whether it is required or studied for on the job."]);
+    var y = low.match(/(\d+)\+?\s*years?'?\s+(?:of\s+)?(?:relevant\s+|professional\s+)?experience/);
+    if (y) req.notes.push(["Experience asked for", "The advert asks for " + y[1] + " years of experience."]);
+    return req;
+  }
+
+  function parseCand(cv, selClass, subjIn, alIn) {
+    var low = cv.toLowerCase();
+    var c = { status: "unknown", rank: null, subject: "", alPts: null, alText: "", detected: { cls: "", subject: "", al: "" } };
+
+    var r = null;
+    if (/\b1st\b|first[- ]class/.test(low)) r = 1;
+    else if (/\b2[:.]1\b|upper[- ]second/.test(low)) r = 2;
+    else if (/\b2[:.]2\b|lower[- ]second/.test(low)) r = 3;
+    else if (/\bthird[- ]class|\b3rd\b/.test(low)) r = 4;
+    var hasMark = DEGREE_MARK.test(low);
+
+    if (selClass === "pending") c.status = "pending";
+    else if (selClass === "none") c.status = "none";
+    else if (/^[1-4]$/.test(selClass)) { c.status = "awarded"; c.rank = parseInt(selClass, 10); }
+    else if (r !== null) { c.status = "awarded"; c.rank = r; c.detected.cls = CLASS_NAME[r]; }
+    else if (hasMark) c.status = "awarded-unknown";
+
+    var subj = subjIn.trim().toLowerCase();
+    if (!subj) {
+      var idx = low.search(DEGREE_MARK);
+      if (idx !== -1) {
+        var win = low.slice(idx, idx + 120), best = -1, bw = "";
+        SUBJECTS.forEach(function (w) {
+          var p = win.indexOf(w);
+          if (p !== -1 && (best === -1 || p < best)) { best = p; bw = w; }
+        });
+        subj = bw;
+        c.detected.subject = bw;
+      }
+    }
+    c.subject = subj;
+
+    var gtxt = alIn.trim().toUpperCase();
+    if (gtxt) {
+      var gm = gtxt.match(/A\*|[A-E]/g);
+      if (gm && gm.length >= 3) { c.alPts = gradePoints(gtxt); c.alText = gm.slice(0, 3).join(""); }
+    } else {
+      var cm = cv.match(AL_AFTER) || cv.match(AL_BEFORE);
+      if (cm) { c.alPts = gradePoints(cm[1]); c.alText = cm[1]; c.detected.al = cm[1]; }
+    }
+    return c;
+  }
+
+  function computeFit(kw, found, n, req, cand) {
+    var rows = [], total = kw, hard = false, soft = 1;
+    rows.push({ t: "Keyword match", d: found + " of " + n + " advert keywords appear in your CV.", p: "+" + kw, cls: "pos" });
+    function ded(t, d, pts) { total -= pts; rows.push({ t: t, d: d, p: "−" + pts, cls: "neg" }); }
+    function ok(t, d) { rows.push({ t: t, d: d, p: "met", cls: "pos" }); }
+    function info(t, d, p) { rows.push({ t: t, d: d, p: p || "check", cls: "zero" }); }
+
+    if (req.classReq !== null) {
+      var need = "a " + CLASS_NAME[req.classReq] + " or above";
+      if (cand.status === "none") { ded("Degree class", "The advert asks for " + need + ". You have no degree.", 50); hard = true; }
+      else if (cand.status === "pending") ded("Degree class", "The advert asks for " + need + ". Your result is pending, so check whether final-year students can apply.", 15);
+      else if (cand.rank === null) ded("Degree class", "The advert asks for " + need + ". Your class could not be read from the CV. Pick it in your details.", 5);
+      else {
+        var steps = cand.rank - req.classReq;
+        var have = "You have a " + CLASS_NAME[cand.rank] + ".";
+        if (steps > 0) { ded("Degree class", "The advert asks for " + need + ". " + have, steps === 1 ? 30 : 45); hard = true; }
+        else ok("Degree class", "The advert asks for " + need + ". " + have);
+      }
+    } else if (req.degree) {
+      if (cand.status === "none") { ded("Degree", "The advert asks for a degree. You have none.", 40); hard = true; }
+      else if (cand.status === "pending") ded("Degree", "The advert asks for a degree. Your result is pending.", 10);
+      else if (cand.status === "unknown") ded("Degree", "The advert asks for a degree. None was found in the CV.", 5);
+      else ok("Degree", "The advert asks for a degree. Your CV shows one.");
+    } else {
+      info("Degree", "No degree or class requirement found in the advert.", "none");
+    }
+
+    if (cand.status !== "none") {
+      if (req.anySubject) ok("Degree subject", "The advert accepts any degree subject.");
+      else if (req.subjects.length) {
+        var list = req.subjects.slice(0, 6).join(", ");
+        if (!cand.subject) ded("Degree subject", "The advert lists " + list + ". Your subject could not be read from the CV. Enter it in your details.", 5);
+        else {
+          var cs = normSubj(cand.subject);
+          var okSubj = req.subjects.some(function (w) { return cs.indexOf(normSubj(w)) !== -1; });
+          if (okSubj) ok("Degree subject", "The advert lists " + list + ". Your subject is " + cand.subject + ".");
+          else { ded("Degree subject", "The advert lists " + list + ". Your subject is " + cand.subject + ".", 20); soft = 0.6; }
+        }
+      }
+    }
+
+    if (req.alPts !== null) {
+      var needAl = req.alText;
+      if (cand.alPts === null) ded("A-levels", "The advert asks for " + needAl + ". Your grades could not be read from the CV. Enter them in your details.", 5);
+      else if (cand.alPts < req.alPts) {
+        var diff = req.alPts - cand.alPts;
+        ded("A-levels", "The advert asks for " + needAl + ". You have " + (cand.alText || cand.alPts + " points") + ".", Math.min(25, 10 * Math.ceil(diff / 8)));
+      } else ok("A-levels", "The advert asks for " + needAl + ". You have " + (cand.alText || cand.alPts + " points") + ".");
+    }
+
+    req.notes.forEach(function (n) { info(n[0], n[1]); });
+
+    var fit = Math.max(0, Math.min(100, Math.round(total)));
+    rows.push({ t: "Role fit", d: "Keyword match minus the deductions above, kept between 0 and 100.", p: fit + "%", total: true });
+    return { fit: fit, rows: rows, hard: hard, soft: soft };
+  }
+
+  /* ---------- CV strength ---------- */
+  var VERB_RE = /\b(led|lead\w*|built|build\w*|manag\w*|develop\w*|deliver\w*|analys\w*|analyz\w*|creat\w*|organis\w*|organiz\w*|present\w*|improv\w*|increas\w*|reduc\w*|design\w*|implement\w*|coordinat\w*|taught|teach\w*|found\w*|launch\w*|negotiat\w*|secur\w*|achiev\w*|mentor\w*|train\w*|plan\w*|research\w*|model\w*|forecast\w*|streamlin\w*|grew|grow\w*|rais\w*|chair\w*|direct\w*|supervis\w*|evaluat\w*|automat\w*|collaborat\w*|initiat\w*)/gi;
+  var CLICHES = /hard[- ]working|team player|self[- ]motivated|passionate|detail[- ]oriented|go[- ]getter|results[- ]driven|\bdynamic\b|\bsynergy\b/gi;
+
+  function cvStrength(cv) {
+    var rows = [], total = 0;
+    var words = (cv.trim().match(/\S+/g) || []).length;
+
+    var plain = cv.replace(/\b(19|20)\d{2}\b/g, " ").replace(/\b[12][:.][12]\b/g, " ");
+    var q = plain.match(/(£\s?\d[\d,.]*[km]?)|(\d[\d,.]*\s?%)|(\b\d{1,3}(?:,\d{3})+\b)|(\b\d+\s?(?:members|students|pupils|people|clients|staff|users|projects|events|hours|weeks|months|teams?)\b)|(\b\d{2,}\b)/gi) || [];
+    var qPts = Math.min(25, Math.round(25 * q.length / 6));
+    total += qPts;
+    rows.push({ t: "Numbers and results", d: q.length + " figures found. " + (qPts < 25 ? "Add sizes, percentages, money or results to more bullets." : "Good use of figures."), p: qPts + "/25" });
+
+    var vs = {};
+    (cv.match(VERB_RE) || []).forEach(function (v) { vs[v.toLowerCase().slice(0, 4)] = true; });
+    var vn = Object.keys(vs).length;
+    var vPts = Math.min(20, Math.round(20 * vn / 8));
+    total += vPts;
+    rows.push({ t: "Action verbs", d: vn + " different action verbs found. " + (vPts < 20 ? "Start bullets with verbs such as led, built, delivered." : "Good range of verbs."), p: vPts + "/20" });
+
+    var secs = [
+      ["education", /education|university|degree|a[- ]levels?/i],
+      ["experience", /experience|employment|work history|internship|\bintern\b|teacher|worked/i],
+      ["skills", /skills|competenc|proficien/i],
+      ["activities", /achievements|activities|interests|volunteer|society|president|captain|extracurricular/i]
+    ];
+    var have = secs.filter(function (s) { return s[1].test(cv); });
+    var missing = secs.filter(function (s) { return !s[1].test(cv); }).map(function (s) { return s[0]; });
+    var sPts = have.length * 5;
+    total += sPts;
+    rows.push({ t: "Standard sections", d: missing.length ? "No clear " + missing.join(", ") + " section found." : "Education, experience, skills and activities all present.", p: sPts + "/20" });
+
+    var lPts = (words >= 300 && words <= 700) ? 15 : ((words >= 200 && words < 300) || (words > 700 && words <= 900)) ? 8 : 0;
+    total += lPts;
+    rows.push({ t: "Length", d: words + " words. " + (lPts === 15 ? "Within the usual range for a one or two page CV." : "Aim for roughly 300 to 700 words."), p: lPts + "/15" });
+
+    var lead = {};
+    (cv.match(/\b(president|captain|founder|founded|chair|treasurer|secretary|head of|lead|led|managed|mentor|coordinator|committee)\b/gi) || []).forEach(function (w) { lead[w.toLowerCase()] = true; });
+    var ldPts = Math.min(10, Object.keys(lead).length * 5);
+    total += ldPts;
+    rows.push({ t: "Leadership", d: ldPts >= 10 ? "Clear leadership or responsibility roles." : "Name roles where you led, chaired or were responsible for others.", p: ldPts + "/10" });
+
+    var cl = (cv.match(CLICHES) || []).length;
+    var cPts = Math.max(0, 10 - 5 * cl);
+    total += cPts;
+    rows.push({ t: "Clichés", d: cl ? cl + " stock phrases found. Replace them with evidence." : "No stock phrases found.", p: cPts + "/10" });
+
+    return { score: total, rows: rows };
+  }
+
+  /* ---------- 3. chance of an offer ---------- */
+  var TYPE_RATE = { bank: 0.02, large: 0.05, mid: 0.10, small: 0.15, unsure: 0.08 };
+  var TYPE_NAME = { bank: "highly competitive employers", large: "large graduate schemes", mid: "mid-size firms", small: "small firms", unsure: "an unknown employer" };
+
+  function fmtPct(p) {
+    var v = p * 100;
+    if (v < 1) return "<1";
+    if (v < 10) return String(parseFloat(v.toFixed(1)));
+    return String(Math.round(v));
+  }
+
+  function chance(fit, cvScore, hard, soft, type, rateIn) {
+    var userRate = parseFloat(rateIn);
+    var useUser = isFinite(userRate) && userRate > 0 && userRate <= 100;
+    var base = useUser ? userRate / 100 : TYPE_RATE[type];
+    base = Math.max(0.001, Math.min(0.9, base));
+    var z = 0.6 * (fit - 50) / 50 + 0.4 * (cvScore - 50) / 50;
+    var mult = Math.exp(2 * z);
+    var odds = base / (1 - base) * mult;
+    if (hard) odds *= 0.35;
+    if (soft < 1) odds *= soft;
+    var p = odds / (1 + odds);
+    p = Math.max(0.002, Math.min(0.85, p));
+
+    function times(x) { return "×" + (x >= 10 ? Math.round(x) : x.toFixed(2).replace(/0$/, "")); }
+    var rows = [];
+    rows.push({ t: "Starting rate", d: useUser ? "The acceptance rate you entered." : "Rough assumption for " + TYPE_NAME[type] + ". Enter the real rate if you know it.", p: fmtPct(base) + "%" });
+    rows.push({ t: "Your role fit", d: "An average applicant is treated as 50.", p: fit + "%" });
+    rows.push({ t: "Your CV strength", d: "An average applicant is treated as 50.", p: cvScore + "/100" });
+    rows.push({ t: "Effect of fit and CV", d: "Role fit counts for 60% and CV strength for 40%. This multiplies your odds against an average applicant.", p: times(mult), cls: mult >= 1 ? "pos" : "neg" });
+    if (hard) rows.push({ t: "Entry requirement not met", d: "Employers often filter these out before anyone reads the CV.", p: "×0.35", cls: "neg" });
+    if (soft < 1) rows.push({ t: "Degree subject not listed", d: "The advert names subjects that yours is not among.", p: "×0.6", cls: "neg" });
+    rows.push({ t: "Estimated chance", d: "Rough estimate. Use it to compare roles, not as a forecast.", p: fmtPct(p) + "%", total: true });
+    return { p: p, rows: rows, base: base, useUser: useUser };
+  }
+
+  /* ---------- examples ---------- */
+  var EX_AD = "Graduate Analyst, Corporate Finance\nWe are looking for a graduate analyst to join our corporate finance team. You will build financial models in Excel, support valuation work and prepare client presentations. You will carry out data analysis on company accounts, run due diligence on potential acquisitions and manage multiple projects with tight deadlines.\nRequirements: a 2:1 degree or above in a numerate subject, AAB at A level, excellent communication skills, strong attention to detail and the ability to work with stakeholders at every level. Experience with Python or SQL is an advantage. Financial modelling, valuation and stakeholder management are central to the role. Knowledge of Bloomberg is helpful. You must have the right to work in the UK.";
+  var EX_CV = "Economics graduate with experience in data analysis and budgeting.\nEducation: BA (Hons) Economics, 2:1, University of Example, 2022 to 2025. A-levels: A*AB in Maths, Economics and History.\nExperience: Built a forecasting model in Excel for a student society with a £12,000 annual budget. Presented findings to the committee and managed relationships with sponsors. Completed a dissertation using Python to analyse regression results. Worked on a group valuation project covering three listed companies.\nActivities: Treasurer of the Economics Society, with 120 members. Tutored 8 pupils in maths. Strong communication skills developed through tutoring and team projects.\nSkills: Excel, Python, SQL.";
+
+  /* ---------- rendering ---------- */
+  var $ = function (id) { return document.getElementById(id); };
+  var cvEl = $("cv"), adEl = $("ad");
+
+  function words(s) { var m = s.trim().match(/\S+/g); return m ? m.length : 0; }
+  function chips(el, terms, cls) {
+    el.textContent = "";
+    terms.forEach(function (t) {
+      var c = document.createElement("span");
+      c.className = "chip " + cls;
+      c.appendChild(document.createTextNode(t.display));
+      var n = document.createElement("i");
+      n.textContent = "×" + t.count;
+      c.appendChild(n);
+      el.appendChild(c);
+    });
+  }
+  function rowsInto(el, rows) {
+    el.textContent = "";
+    rows.forEach(function (r) {
+      var li = document.createElement("li");
+      li.className = "row" + (r.total ? " total" : "");
+      var t = document.createElement("div"); t.className = "t"; t.textContent = r.t;
+      var p = document.createElement("div"); p.className = "p " + (r.cls || "zero"); p.textContent = r.p;
+      li.appendChild(t); li.appendChild(p);
+      if (r.d) { var d = document.createElement("div"); d.className = "d"; d.textContent = r.d; li.appendChild(d); }
+      el.appendChild(li);
+    });
+  }
+  function setNum(id, text) { $(id).innerHTML = text + "<small>%</small>"; }
+  function setMeter(id, pct, warn) {
+    var m = $(id);
+    m.style.width = pct + "%";
+    m.className = "meter-fill" + (warn ? " warn" : "");
+  }
+  function hints(cand, type, rateIn, ch) {
+    $("hint-class").textContent = cand.detected.cls ? "Read from CV: " + cand.detected.cls : ($("f-class").value ? "" : "Not found in the CV. Pick one.");
+    $("hint-subject").textContent = cand.detected.subject ? "Read from CV: " + cand.detected.subject : ($("f-subject").value ? "" : "Not found in the CV. Enter it.");
+    $("hint-al").textContent = cand.detected.al ? "Read from CV: " + cand.detected.al : ($("f-al").value ? "" : "Not found in the CV. Enter it if the advert asks.");
+    $("hint-type").textContent = "Starting rate about " + fmtPct(TYPE_RATE[type]) + "% if no rate is entered.";
+    $("hint-rate").textContent = ch ? (ch.useUser ? "Using your figure." : "Using the employer type default.") : "";
+  }
+
+  function render() {
+    var cv = cvEl.value, ad = adEl.value;
+    $("cv-count").textContent = words(cv) + " words";
+    $("ad-count").textContent = words(ad) + " words";
+    var miss = $("missing"), hit = $("matched");
+    var type = $("f-type").value, rateIn = $("f-rate").value;
+
+    if (cv.trim().length < 20 || ad.trim().length < 20) {
+      setNum("kw-num", "0"); setNum("fit-num", "0"); setNum("ch-num", "0");
+      setMeter("kw-meter", 0); setMeter("fit-meter", 0); setMeter("ch-meter", 0);
+      $("kw-sub").textContent = "Paste both documents to start.";
+      $("fit-band").textContent = "Waiting for text";
+      ["fit-rows", "cv-rows", "ch-rows"].forEach(function (id) { $(id).innerHTML = '<li class="empty">Nothing to show yet.</li>'; });
+      $("cv-score").textContent = "";
+      miss.innerHTML = '<span class="empty">Nothing to show yet.</span>';
+      hit.innerHTML = '<span class="empty">Nothing to show yet.</span>';
+      $("miss-count").textContent = ""; $("hit-count").textContent = "";
+      hints({ detected: { cls: "", subject: "", al: "" } }, type, rateIn, null);
+      return;
+    }
+
+    var kw = analyze(ad, cv);
+    var found = kw.terms.filter(function (t) { return t.found; });
+    var missing = kw.terms.filter(function (t) { return !t.found; });
+    setNum("kw-num", kw.score);
+    setMeter("kw-meter", kw.score);
+    $("kw-sub").textContent = found.length + " of " + kw.terms.length + " advert keywords appear in your CV.";
+
+    var req = parseAd(ad);
+    var cand = parseCand(cv, $("f-class").value, $("f-subject").value, $("f-al").value);
+    var fit = computeFit(kw.score, found.length, kw.terms.length, req, cand);
+    setNum("fit-num", fit.fit);
+    setMeter("fit-meter", fit.fit, fit.hard);
+    $("fit-band").textContent = fit.hard ? "Entry requirement not met" : fit.fit >= 70 ? "Strong fit" : fit.fit >= 45 ? "Possible fit" : "Weak fit";
+    rowsInto($("fit-rows"), fit.rows);
+
+    var st = cvStrength(cv);
+    $("cv-score").textContent = st.score + " / 100";
+    rowsInto($("cv-rows"), st.rows);
+
+    var ch = chance(fit.fit, st.score, fit.hard, fit.soft, type, rateIn);
+    setNum("ch-num", fmtPct(ch.p));
+    setMeter("ch-meter", Math.max(1, Math.round(ch.p * 100)));
+    rowsInto($("ch-rows"), ch.rows);
+    hints(cand, type, rateIn, ch);
+
+    if (missing.length) chips(miss, missing, "miss"); else miss.innerHTML = '<span class="empty">Every keyword is covered.</span>';
+    if (found.length) chips(hit, found, "hit"); else hit.innerHTML = '<span class="empty">No advert keywords found in your CV yet.</span>';
+    $("miss-count").textContent = missing.length;
+    $("hit-count").textContent = found.length;
+  }
+
+  var timer = null;
+  function schedule() { clearTimeout(timer); timer = setTimeout(function () { $("example-note").textContent = ""; render(); }, 150); }
+  ["cv", "ad", "f-subject", "f-al", "f-rate"].forEach(function (id) { $(id).addEventListener("input", schedule); });
+  ["f-class", "f-type"].forEach(function (id) { $(id).addEventListener("change", schedule); });
+  $("load-example").addEventListener("click", function () {
+    cvEl.value = EX_CV; adEl.value = EX_AD;
+    render();
+    $("example-note").textContent = "Example text, not your CV. Clear it and paste your own.";
+  });
+  $("clear").addEventListener("click", function () {
+    cvEl.value = ""; adEl.value = ""; $("example-note").textContent = ""; render();
+  });
+
+  cvEl.value = EX_CV; adEl.value = EX_AD;
+  $("example-note").textContent = "Example text, not your CV. Clear it and paste your own.";
+  render();
+
+  if (typeof window !== "undefined") window.__cvk = { analyze: analyze, parseAd: parseAd, parseCand: parseCand, computeFit: computeFit, cvStrength: cvStrength, chance: chance, EX_AD: EX_AD, EX_CV: EX_CV };
+})();
+</script>
+
+</body></html>
